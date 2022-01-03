@@ -1,0 +1,20 @@
+{
+  "name": "mahjong",
+  "version": "1.0.0",
+  "description": "Small web-app to track family mahjong winnings and statistics.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Christopher Kei",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "googleapis": "^92.0.0",
+    "mysql2": "^2.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

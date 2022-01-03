@@ -1,0 +1,17 @@
+.formContainer {
+  margin: 2rem 2rem 0 1rem;
+}
+
+.submitButton {
+  padding: 0.5rem;
+  border: 0.1rem solid black;
+  border-radius: 1rem;
+  margin-top: 2rem;
+  cursor: pointer;
+}
+
+.submitText {
+  margin: 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
