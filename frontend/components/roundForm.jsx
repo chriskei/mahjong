@@ -15,14 +15,16 @@ const RoundForm = ({ trigger, setTrigger }) => {
           { winner, quality, thrower },
           { setSubmitting, resetForm }
         ) => {
-          await axios.post("http://localhost:8888/", {
-            winner,
-            quality,
-            thrower,
-          });
-          setSubmitting(false);
-          resetForm();
-          setTrigger(!trigger);
+          if (winner !== "" && quality !== "" && thrower !== "") {
+            await axios.post("http://localhost:8888/", {
+              winner,
+              quality,
+              thrower,
+            });
+            setSubmitting(false);
+            resetForm();
+            setTrigger(!trigger);
+          }
         }}
       >
         <Form>

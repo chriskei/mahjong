@@ -16,7 +16,7 @@ const lineData = [
   { dataKey: "momEarnings", name: "Mom", stroke: "#ff8000" },
   { dataKey: "dadEarnings", name: "Dad", stroke: "#005ce6" },
   { dataKey: "tiffEarnings", name: "Tiff", stroke: "#bb99ff" },
-  { dataKey: "chrisEarnings", name: "Chris", stroke: "#009933" },
+  { dataKey: "chrisEarnings", name: "Chris", stroke: "#e30000" },
 ];
 
 const DailyEarningsGraph = ({ trigger }) => {
