@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const mysql = require("mysql2/promise");
-const { google } = require("googleapis");
+// const { google } = require("googleapis");
 
 // Constants
 let connection;
@@ -85,64 +85,64 @@ app.post("/", async (req, res) => {
       indexToEarnings.push(-baseMoney);
     }
   }
-  await connection.query("CALL addEarnings(?, ?, ?, ?);", indexToEarnings);
-  await connection.query("CALL addStats(?, ?);", [winner, quality]);
+  await connection.query("CALL mahjong.addEarnings2(?, ?, ?, ?);", indexToEarnings);
+  await connection.query("CALL mahjong.addStats2(?, ?);", [winner, quality]);
   console.log(`Sent data to MySQL: ${indexToEarnings}`);
 
   // Backup to google sheets after refreshing OAuth credentials
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.OAUTH_CLIENT_ID,
-    process.env.OAUTH_CLIENT_SECRET
-  );
-  oauth2Client.setCredentials({
-    refresh_token: process.env.OAUTH_REFRESH_TOKEN,
-  });
-  oauth2Client.refreshAccessToken(async (err, tokens) => {
-    if (err) {
-      console.error(err);
-    } else {
-      oauth2Client.setCredentials({
-        access_token: tokens.access_token,
-      });
+  // const oauth2Client = new google.auth.OAuth2(
+  //   process.env.OAUTH_CLIENT_ID,
+  //   process.env.OAUTH_CLIENT_SECRET
+  // );
+  // oauth2Client.setCredentials({
+  //   refresh_token: process.env.OAUTH_REFRESH_TOKEN,
+  // });
+  // oauth2Client.refreshAccessToken(async (err, tokens) => {
+  //   if (err) {
+  //     console.error(err);
+  //   } else {
+  //     oauth2Client.setCredentials({
+  //       access_token: tokens.access_token,
+  //     });
 
-      // Get round number using readEarnings
-      const readEarningsRes = await connection.query("CALL readEarnings();");
-      const readEarningsArr = readEarningsRes[0][0];
-      const roundNum = readEarningsArr.length - 1;
+  //     // Get round number using readEarnings
+  //     const readEarningsRes = await connection.query("CALL readEarnings();");
+  //     const readEarningsArr = readEarningsRes[0][0];
+  //     const roundNum = readEarningsArr.length - 1;
 
-      // Date doesn't have to sync perfectly, just for our own viewing
-      const dateRoundNumIndexToEarnings = [
-        new Date().toISOString(),
-        roundNum,
-        ...indexToEarnings,
-      ];
+  //     // Date doesn't have to sync perfectly, just for our own viewing
+  //     const dateRoundNumIndexToEarnings = [
+  //       new Date().toISOString(),
+  //       roundNum,
+  //       ...indexToEarnings,
+  //     ];
 
-      // Google API authentication
-      const sheets = google.sheets({
-        version: "v4",
-        auth: process.env.GOOGLE_API_AUTH,
-      });
+  //     // Google API authentication
+  //     const sheets = google.sheets({
+  //       version: "v4",
+  //       auth: process.env.GOOGLE_API_AUTH,
+  //     });
 
-      sheets.spreadsheets.values.append({
-        spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-        range: "Sheet1",
-        valueInputOption: "RAW",
-        insertDataOption: "INSERT_ROWS",
-        resource: {
-          values: [dateRoundNumIndexToEarnings],
-        },
-        auth: oauth2Client,
-      });
-      console.log(`Sent data to Google Sheets: ${dateRoundNumIndexToEarnings}`);
-    }
-  });
+  //     sheets.spreadsheets.values.append({
+  //       spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
+  //       range: "Sheet1",
+  //       valueInputOption: "RAW",
+  //       insertDataOption: "INSERT_ROWS",
+  //       resource: {
+  //         values: [dateRoundNumIndexToEarnings],
+  //       },
+  //       auth: oauth2Client,
+  //     });
+  //     console.log(`Sent data to Google Sheets: ${dateRoundNumIndexToEarnings}`);
+  //   }
+  // });
 
   res.send("POST to endpoint / complete.");
 });
 
 // Get overall earnings data
 app.get("/earnings", async (_req, res) => {
-  const readEarningsRes = await connection.query("CALL readEarnings();");
+  const readEarningsRes = await connection.query("CALL mahjong.readEarnings2();");
   const readEarningsArr = readEarningsRes[0][0];
   const allEarningsData = [];
 
@@ -180,14 +180,14 @@ app.get("/earnings", async (_req, res) => {
 
   const finalEarningsData = allEarningsData[allEarningsData.length - 1];
   console.log(
-    `Got lifetime earnings data ending with round ${finalEarningsData.roundNum}.`
+    `Got lifetime earnings data ending with round ${finalEarningsData?.roundNum}.`
   );
   res.send(allEarningsData);
 });
 
 // Get daily earnings data
 app.get("/dailyEarnings", async (_req, res) => {
-  const readEarningsRes = await connection.query("CALL readEarnings();");
+  const readEarningsRes = await connection.query("CALL mahjong.readEarnings2();");
   const readEarningsArr = readEarningsRes[0][0];
   const allEarningsData = [];
 
@@ -263,14 +263,14 @@ app.get("/dailyEarnings", async (_req, res) => {
 
   const finalEarningsData = allEarningsData[allEarningsData.length - 1];
   console.log(
-    `Got daily earnings data ending with round ${finalEarningsData.roundNum}.`
+    `Got daily earnings data ending with round ${finalEarningsData?.roundNum}.`
   );
   res.send(allEarningsData);
 });
 
 // Get overall statistics
 app.get("/stats", async (_req, res) => {
-  const readStatsRes = await connection.query("CALL readStats();");
+  const readStatsRes = await connection.query("CALL mahjong.readStats2();");
   const readStatsArr = readStatsRes[0][0];
   const numStats = readStatsArr.length;
   const allStatsData = [
@@ -307,14 +307,15 @@ app.get("/stats", async (_req, res) => {
 app.listen(port, async () => {
   try {
     connection = await mysql.createConnection({
-      host: "localhost",
+      host: "127.0.0.1",
+      port: 3306,
       user: "root",
-      password: process.env.MYSQL_PASSWORD,
-      database: "mahjong",
+      password: "root", // process.env.MYSQL_PASSWORD,
       multipleStatements: true,
     });
     console.log("Mahjong backend and MySQL connection are good to go.");
   } catch (err) {
-    console.log("Error connecting to MySQL.");
+    console.log("Error connecting to MySQL:");
+    console.log(err);
   }
 });

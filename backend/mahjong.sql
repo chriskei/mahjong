@@ -43,12 +43,46 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE PROCEDURE addEarnings2 (
+	momEarnings FLOAT, 
+    dadEarnings FLOAT, 
+    tiffEarnings FLOAT, 
+    chrisEarnings FLOAT
+)
+BEGIN
+	DECLARE roundNum INT;
+    SET roundNum = (SELECT COUNT(*) FROM earnings2);
+	INSERT INTO earnings2 VALUES (
+		NOW() - INTERVAL 5 HOUR,
+        roundNum,
+        momEarnings,
+        dadEarnings,
+        tiffEarnings,
+        chrisEarnings
+    );
+END $$
+DELIMITER ;
+
+DELIMITER $$
 CREATE PROCEDURE addStats (
 	name VARCHAR(5),
     quality VARCHAR(1)
 )
 BEGIN
 	INSERT INTO stats (name, quality) VALUES (
+		name,
+        quality
+    );
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE addStats2 (
+	name VARCHAR(5),
+    quality VARCHAR(1)
+)
+BEGIN
+	INSERT INTO stats2 (name, quality) VALUES (
 		name,
         quality
     );
@@ -63,9 +97,23 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE PROCEDURE readEarnings2 ()
+BEGIN
+	SELECT * FROM earnings2;
+END $$
+DELIMITER ;
+
+DELIMITER $$
 CREATE PROCEDURE readStats ()
 BEGIN
 	SELECT * FROM stats;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE readStats2 ()
+BEGIN
+	SELECT * FROM stats2;
 END $$
 DELIMITER ;
 

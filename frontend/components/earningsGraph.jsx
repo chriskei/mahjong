@@ -14,9 +14,9 @@ import styles from "../styles/earningsGraph.module.css";
 
 const lineData = [
   { dataKey: "momEarnings", name: "Mom", stroke: "#ff8000" },
-  { dataKey: "dadEarnings", name: "Dad", stroke: "#005ce6" },
-  { dataKey: "tiffEarnings", name: "Tiff", stroke: "#bb99ff" },
-  { dataKey: "chrisEarnings", name: "Chris", stroke: "#e30000" },
+  { dataKey: "dadEarnings", name: "Dad", stroke: "#38afff" },
+  { dataKey: "tiffEarnings", name: "Tiff", stroke: "#8128e0" },
+  { dataKey: "chrisEarnings", name: "Chris", stroke: "#cf0000" },
 ];
 
 const EarningsGraph = ({ trigger }) => {
